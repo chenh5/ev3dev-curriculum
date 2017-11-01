@@ -8,14 +8,14 @@ the more complex callback approach that uses lamdba when data needs to be shared
 Since this module is all about the buttons the Sound code has just been provided as a finished
 example.  You will call different Sound functions using different buttons.
 
-Authors: David Fisher and PUT_YOUR_NAME_HERE.
-"""  # TODO: 1. PUT YOUR NAME IN THE ABOVE LINE.
+Authors: David Fisher and HUI CHEN.
+"""  # DONE: 1. PUT YOUR NAME IN THE ABOVE LINE.
 
 import ev3dev.ev3 as ev3
 import time
 
 
-# TODO: 2. Have someone on your team run this program, as is, on the EV3 and make sure everyone understands the code.
+# DONE: 2. Have someone on your team run this program, as is, on the EV3 and make sure everyone understands the code.
 # There is currently no way to exit this program, so you will have to manually exit the program using your keyboard.
 #   Hit Control C to exit the program when you are done running it.  Ctrl c is a KeyboardInterrupt.
 # Can you see what the robot does and explain what each line of code is doing? Talk as a group to make sure.

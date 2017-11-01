@@ -16,8 +16,91 @@ import math
 import time
 
 
+
+
+
 class Snatch3r(object):
     """Commands for the Snatch3r robot that might be useful in many different programs."""
-    
+
+    def __init__(self):
+
+        self.left_motor = ev3.LargeMotor(ev3.OUTPUT_B)
+        self.right_motor = ev3.LargeMotor(ev3.OUTPUT_C)
+
+        # Check that the motors are actually connected
+        assert self.left_motor.connected
+        assert self.right_motor.connected
+
+        self.arm_motor = ev3.MediumMotor(ev3.OUTPUT_A)
+        assert self.arm_motor.connected
+
+        self.touch_sensor = ev3.TouchSensor()
+        assert self.touch_sensor
+
+
     # TODO: Implement the Snatch3r class as needed when working the sandox exercises
-    # (and delete these comments)
+    def drive_inches(self, length, speed):
+        self.right_motor.run_to_rel_pos(position_sp=length * 90, speed_sp=speed)
+        self.left_motor.run_to_rel_pos(position_sp=length * 90, speed_sp=speed)
+        self.right_motor.wait_while(ev3.Motor.STATE_RUNNING)
+        self.left_motor.wait_while(ev3.Motor.STATE_RUNNING)
+
+    def turning_degrees(self, degrees, speed):
+        if degrees > 0:
+            self.right_motor.run_to_rel_pos(position_sp=degrees * 4.615384615, speed_sp=speed)
+            self.left_motor.run_to_rel_pos(position_sp=-degrees * 4.615384615, speed_sp=speed)
+        if degrees < 0:
+            self.right_motor.run_to_rel_pos(position_sp=-degrees * 4.615384615, speed_sp=speed)
+            self.left_motor.run_to_rel_pos(position_sp=degrees * 4.615384615, speed_sp=speed)
+        self.right_motor.wait_while(ev3.Motor.STATE_RUNNING)
+        self.left_motor.wait_while(ev3.Motor.STATE_RUNNING)
+
+    def draw_polygon(self, length, sides, speed):
+        degree = 180 -  ((sides - 2) * 180)/sides
+        for k in range(abs(sides)):
+            self.drive_inches(length, speed)
+            if sides > 0:
+                self.turning_degrees(-degree, speed)
+            if sides < 0:
+                self.turning_degrees(degree, speed)
+
+    def arm_calibration(self):
+        # arm_motor = ev3.MediumMotor(ev3.OUTPUT_A)
+        # assert arm_motor.connected
+        #
+        # touch_sensor = ev3.TouchSensor()
+        # assert touch_sensor
+
+        self.arm_motor.run_forever(speed_sp=900)
+
+        while not self.touch_sensor.is_pressed:
+            time.sleep(0.01)
+        self.arm_motor.stop(stop_action=ev3.Motor.STOP_ACTION_BRAKE)
+        ev3.Sound.beep()
+        arm_revolutions_for_full_range = 14.2
+        self.arm_motor.run_to_rel_pos(position_sp=-arm_revolutions_for_full_range * 360)
+        self.arm_motor.wait_while(ev3.Motor.STATE_RUNNING)
+        ev3.Sound.beep()
+        self.arm_motor.position = 0  # Calibrate the down position as 0 (this line is correct as is).
+
+    def arm_up(self):
+        self.arm_motor.run_forever(speed_sp=900)
+        while not self.touch_sensor.is_pressed:
+            time.sleep(0.01)
+        self.arm_motor.stop(stop_action=ev3.Motor.STOP_ACTION_BRAKE)
+        ev3.Sound.beep()
+
+    def arm_down(self):
+        self.arm_motor.run_to_abs_pos(position_sp=0, speed_sp=900)
+        self.arm_motor.wait_while(ev3.Motor.STATE_RUNNING)  # Blocks until the motor finishes running
+        ev3.Sound.beep()
+
+    def shutdown(self):
+        self.left_motor.stop(stop_action=ev3.Motor.STOP_ACTION_BRAKE)
+        self.right_motor.stop(stop_action=ev3.Motor.STOP_ACTION_BRAKE)
+        self.arm_motor.stop(stop_action=ev3.Motor.STOP_ACTION_BRAKE)
+        ev3.Leds.set_color(ev3.Leds.LEFT, ev3.Leds.GREEN)
+        ev3.Leds.set_color(ev3.Leds.RIGHT, ev3.Leds.GREEN)
+        print('Goodbye')
+        ev3.Sound.speak('Goodbye')
+

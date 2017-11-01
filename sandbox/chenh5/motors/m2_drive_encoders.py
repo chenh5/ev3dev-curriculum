@@ -4,14 +4,39 @@ This module lets you practice using the encoder to determine distances while blo
 
 You will now use a run_to_rel_pos command to implement the action drive inches action.
 
-Authors: David Fisher and PUT_YOUR_NAME_HERE.
-"""  # TODO: 1. PUT YOUR NAME IN THE ABOVE LINE.
+Authors: David Fisher and HUI CHEN.
+"""  # DONE: 1. PUT YOUR NAME IN THE ABOVE LINE.
 
 # TODO: 2. Copy the contents of your m1_drive_timed.py and paste that text into this file below these comments.
 #   If your program says and prints anything at the start change it to print and say "Drive using encoders"
+import ev3dev.ev3 as ev3
+import time
 
+
+def main():
+    print("--------------------------------------------")
+    print("  Drive_Encoders ")
+    print("--------------------------------------------")
+    ev3.Sound.speak("Drive using input").wait()
+
+    # Connect two large motors on output ports B and C
+    left_motor = ev3.LargeMotor(ev3.OUTPUT_B)
+    right_motor = ev3.LargeMotor(ev3.OUTPUT_C)
+
+    # Check that the motors are actually connected
+    assert left_motor.connected
+    assert right_motor.connected
+    length = int(input('Please input Length traveled in inches'))
+    speed = int(input('Please input speed in degrees per second'))
+    right_motor.run_to_rel_pos(position_sp=length * 90, speed_sp=speed)
+    left_motor.run_to_rel_pos(position_sp=length * 90, speed_sp=speed)
+    right_motor.wait_while(ev3.Motor.STATE_RUNNING)
+    left_motor.wait_while(ev3.Motor.STATE_RUNNING)
 # TODO: 3. Add a beep after the drive motors stop (see code below).  Test your code to hear the beep AFTER movement.
-#   ev3.Sound.beep().wait()
+    ev3.Sound.beep().wait()
+
+
+main()
 
 # TODO: 4. Instead of using the run_forever, time.sleep, stop pattern switch to using the run_to_rel_pos command.
 #   You will need to determine the position_sp value to pass into the run_to_rel_pos command as a named argument.
@@ -28,6 +53,7 @@ Authors: David Fisher and PUT_YOUR_NAME_HERE.
 #        -- position_sp
 #        -- speed_sp
 #        -- stop_action
+
 
 # TODO: 5. Make sure the beep happens AFTER the motors stop.  Use the wait_while command to block code execution.
 

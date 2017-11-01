@@ -13,6 +13,38 @@ Authors: David Fisher and PUT_YOUR_NAME_HERE.
 #     print("--------------------------------------------")
 #     ev3.Sound.speak("Turn degrees").wait()
 #   You will need to modify that code for this problem, but it is a handy starting point.
+import ev3dev.ev3 as ev3
+import robot_controller as robo
+
+
+def main():
+    # --------------------------------------------------------------
+    # We have already implemented this module for you.
+    # There are no TODOs in the code.  Do NOT modify it.
+    # You are not allowed to make any changes to this code.
+    # --------------------------------------------------------------
+    print("--------------------------------------------")
+    print(" Turning Degrees")
+    print("--------------------------------------------")
+    ev3.Sound.speak("Drive inches").wait()
+    robot = robo.Snatch3r()
+
+    while True:
+        degrees_to_turn = int(input("Degrees to turn (Positive -> left): "))
+        if degrees_to_turn == 0:
+            break
+        turn_speed_sp = int(input("Speed (degrees per second): "))
+        if turn_speed_sp == 0:
+            break
+
+        robot.turning_degrees(degrees_to_turn, turn_speed_sp)
+        ev3.Sound.beep().wait()  # Fun little beep
+
+    print("Goodbye!")
+    ev3.Sound.speak("Goodbye").wait()
+
+
+main()
 
 # TODO: 3. Create a method in your library called turn_degrees that receives the degrees_to_turn and turn_speed_sp
 #   To help you get started here is a potential method signature line that will be in your library.

@@ -3,8 +3,8 @@ The goal for this module is to show that usually in our MQTT communication we wi
 that same recipient will be sending messages back to us.  This module also runs only on your PC and has very few todo
 items.  You will simply be setting your name and you will be selecting one person on your team to send messages to.
 
-Authors: David Fisher and PUT_YOUR_NAME_HERE.
-"""  # TODO: 1. PUT YOUR NAME IN THE ABOVE LINE.
+Authors: David Fisher and hui chen.
+"""  # done: 1. PUT YOUR NAME IN THE ABOVE LINE.
 
 import tkinter
 from tkinter import ttk
