@@ -37,6 +37,8 @@ class Snatch3r(object):
         self.touch_sensor = ev3.TouchSensor()
         assert self.touch_sensor
 
+        self.running = True
+
 
     # TODO: Implement the Snatch3r class as needed when working the sandox exercises
     def drive_inches(self, length, speed):
@@ -103,4 +105,21 @@ class Snatch3r(object):
         ev3.Leds.set_color(ev3.Leds.RIGHT, ev3.Leds.GREEN)
         print('Goodbye')
         ev3.Sound.speak('Goodbye')
+
+    def loop_forever(self):
+        self.running = True
+        while self.running:
+            time.sleep(0.1)
+
+    def shutdown(self):
+        self.running = False
+
+    def constant_moving(self, l_speed, r_speed):
+        self.left_motor.run_forever(speed_sp=l_speed)
+        self.right_motor.run_forever(speed_sp=r_speed)
+
+    def stop(self):
+        self.left_motor.stop(stop_action=ev3.Motor.STOP_ACTION_BRAKE)
+        self.right_motor.stop(stop_action=ev3.Motor.STOP_ACTION_BRAKE)
+
 
