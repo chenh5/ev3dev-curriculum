@@ -29,12 +29,20 @@ import tkinter
 from tkinter import ttk
 
 import mqtt_remote_method_calls as com
+key_status = {'Up': False, 'Down': False, 'Left': False, 'Right': False}
+
+
+def pressed(event):
+    key_status[event.keysym] = True
+
+
+def released(event):
+    key_status[event.keysym] = False
 
 
 def main():
     # Done: 2. Setup an mqtt_client.  Notice that since you don't need to receive any messages you do NOT need to have
     # a MyDelegate class.  Simply construct the MqttClient with no parameter in the constructor (easy).
-
     mqtt_client = com.MqttClient()
     mqtt_client.connect_to_ev3()
 
@@ -66,12 +74,10 @@ def main():
     forward_button.grid(row=2, column=1)
     # forward_button and '<Up>' key is done for your here...
     forward_button['command'] = lambda: send_forward(mqtt_client, left_speed_entry.get(), right_speed_entry.get())
-    root.bind('<Up>', lambda event: send_forward(mqtt_client, left_speed_entry.get(), right_speed_entry.get()))
 
     left_button = ttk.Button(main_frame, text="Left")
     left_button.grid(row=3, column=0)
     left_button['command'] = lambda: send_turning_left(mqtt_client, left_speed_entry.get(), right_speed_entry.get())
-    root.bind('<Left>', lambda event: send_turning_left(mqtt_client, left_speed_entry.get(), right_speed_entry.get()))
     # left_button and '<Left>' key
 
     stop_button = ttk.Button(main_frame, text="Stop")
@@ -83,13 +89,11 @@ def main():
     right_button = ttk.Button(main_frame, text="Right")
     right_button.grid(row=3, column=2)
     right_button['command'] = lambda: send_turning_right(mqtt_client, left_speed_entry.get(), right_speed_entry.get())
-    root.bind('<Right>', lambda event: send_turning_right(mqtt_client, left_speed_entry.get(), right_speed_entry.get()))
     # right_button and '<Right>' key
 
     back_button = ttk.Button(main_frame, text="Back")
     back_button.grid(row=4, column=1)
     back_button['command'] = lambda: send_backward(mqtt_client, left_speed_entry.get(), right_speed_entry.get())
-    root.bind('<Down>', lambda event: send_backward(mqtt_client, left_speed_entry.get(), right_speed_entry.get()))
     # back_button and '<Down>' key
 
     up_button = ttk.Button(main_frame, text="Up")
@@ -106,14 +110,21 @@ def main():
     q_button = ttk.Button(main_frame, text="Quit")
     q_button.grid(row=5, column=2)
     q_button['command'] = (lambda: quit_program(mqtt_client, False))
+    root.bind('<Escape>', lambda event: quit_program(mqtt_client, False))
 
     e_button = ttk.Button(main_frame, text="Exit")
     e_button.grid(row=6, column=2)
     e_button['command'] = (lambda: quit_program(mqtt_client, True))
 
+    for char in ["Up", "Down", "Left", "Right"]:
+        root.bind("<KeyPress-%s>" % char, pressed)
+        root.bind("<KeyRelease-%s>" % char, released)
+
+    left_speed = int(left_speed_entry.get())
+    right_speed = int(right_speed_entry.get())
+    free_move(root, mqtt_client, left_speed, right_speed)
     root.mainloop()
 
-    root.bind()
 
 # ----------------------------------------------------------------------
 # Tkinter callbacks
@@ -169,6 +180,28 @@ def send_turning_right(mqtt_client, left_speed, right_speed):
 def send_stop(mqtt_client):
     print('stopped')
     mqtt_client.send_message('stop')
+
+
+def free_move(window, mqtt_client, left_speed, right_speed):
+    if key_status["Up"] is True and key_status["Down"] is False and key_status["Left"] is False and key_status["Right"] is False:
+        mqtt_client.send_message('free_moving', [left_speed, right_speed])
+    if key_status["Up"] is False and key_status["Down"] is True and key_status["Left"] is False and key_status["Right"] is False:
+        mqtt_client.send_message('free_moving', [-left_speed, -right_speed])
+    if key_status["Up"] is False and key_status["Down"] is False and key_status["Left"] is True and key_status["Right"] is False:
+        mqtt_client.send_message('free_moving', [-left_speed, right_speed])
+    if key_status["Up"] is False and key_status["Down"] is False and key_status["Left"] is False and key_status["Right"] is True:
+        mqtt_client.send_message('free_moving', [left_speed, -right_speed])
+    if key_status["Up"] is True and key_status["Down"] is False and key_status["Left"] is True and key_status["Right"] is False:
+        mqtt_client.send_message('free_moving', [0.5 * left_speed, right_speed])
+    if key_status["Up"] is True and key_status["Down"] is False and key_status["Left"] is False and key_status["Right"] is True:
+        mqtt_client.send_message('free_moving', [left_speed, 0.5 * right_speed])
+    if key_status["Up"] is False and key_status["Down"] is True and key_status["Left"] is True and key_status["Right"] is False:
+        mqtt_client.send_message('free_moving', [-0.5 * left_speed, -right_speed])
+    if key_status["Up"] is False and key_status["Down"] is True and key_status["Left"] is False and key_status["Right"] is True:
+        mqtt_client.send_message('free_moving', [-left_speed, -0.5 * right_speed])
+    if key_status["Up"] is False and key_status["Down"] is False and key_status["Left"] is False and key_status["Right"] is False:
+        mqtt_client.send_message('stop')
+    window.after(50, free_move(window, mqtt_client, left_speed, right_speed))
 # ----------------------------------------------------------------------
 # Calls  main  to start the ball rolling.
 # ----------------------------------------------------------------------

@@ -13,6 +13,7 @@ import ev3dev.ev3 as ev3
 import time
 
 
+
 def color_sensor_color():
     """ Example of detecting color with the color sensor. """
     color_sensor = ev3.ColorSensor()
