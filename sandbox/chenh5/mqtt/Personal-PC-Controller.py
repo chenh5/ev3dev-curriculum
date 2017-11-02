@@ -64,12 +64,6 @@ def main():
     right_speed_entry.insert(0, "600")
     right_speed_entry.grid(row=1, column=2)
 
-    # Done: 3. Implement the callbacks for the drive buttons. Set both the click and shortcut key callbacks.
-    #
-    # To help get you started the arm up and down buttons have been implemented.
-    # You need to implement the five drive buttons.  One has been writen below to help get you started but is commented
-    # out. You will need to change some_callback1 to some better name, then pattern match for other button / key combos.
-
     forward_button = ttk.Button(main_frame, text="Forward")
     forward_button.grid(row=2, column=1)
     # forward_button and '<Up>' key is done for your here...
