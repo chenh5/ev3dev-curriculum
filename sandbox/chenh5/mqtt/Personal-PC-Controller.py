@@ -177,23 +177,32 @@ def send_stop(mqtt_client):
 
 
 def free_move(window, mqtt_client, left_speed, right_speed):
-    if key_status["Up"] is True and key_status["Down"] is False and key_status["Left"] is False and key_status["Right"] is False:
-        mqtt_client.send_message('free_moving', [left_speed, right_speed])
-    if key_status["Up"] is False and key_status["Down"] is True and key_status["Left"] is False and key_status["Right"] is False:
-        mqtt_client.send_message('free_moving', [-left_speed, -right_speed])
-    if key_status["Up"] is False and key_status["Down"] is False and key_status["Left"] is True and key_status["Right"] is False:
-        mqtt_client.send_message('free_moving', [-left_speed, right_speed])
-    if key_status["Up"] is False and key_status["Down"] is False and key_status["Left"] is False and key_status["Right"] is True:
-        mqtt_client.send_message('free_moving', [left_speed, -right_speed])
-    if key_status["Up"] is True and key_status["Down"] is False and key_status["Left"] is True and key_status["Right"] is False:
+
+    if key_status["Up"] is True and key_status["Left"] is True:
         mqtt_client.send_message('free_moving', [0.5 * left_speed, right_speed])
-    if key_status["Up"] is True and key_status["Down"] is False and key_status["Left"] is False and key_status["Right"] is True:
+        print("Awesome Move Up-Left")
+    elif key_status["Up"] is True and key_status["Right"] is True:
+        print("Awesome Move Up-Right")
         mqtt_client.send_message('free_moving', [left_speed, 0.5 * right_speed])
-    if key_status["Up"] is False and key_status["Down"] is True and key_status["Left"] is True and key_status["Right"] is False:
+    elif key_status["Down"] is True and key_status["Left"] is True:
+        print("Awesome Move Down-Left")
         mqtt_client.send_message('free_moving', [-0.5 * left_speed, -right_speed])
-    if key_status["Up"] is False and key_status["Down"] is True and key_status["Left"] is False and key_status["Right"] is True:
+    elif key_status["Down"] is True and key_status["Right"] is True:
+        print("Awesome Move Down-Right")
         mqtt_client.send_message('free_moving', [-left_speed, -0.5 * right_speed])
-    if key_status["Up"] is False and key_status["Down"] is False and key_status["Left"] is False and key_status["Right"] is False:
+    elif key_status["Up"] is True:
+        print("Going Forward")
+        mqtt_client.send_message('free_moving', [left_speed, right_speed])
+    elif key_status["Down"] is True:
+        mqtt_client.send_message('free_moving', [-left_speed, -right_speed])
+        print("Going Backward")
+    elif key_status["Left"] is True:
+        mqtt_client.send_message('free_moving', [-left_speed, right_speed])
+        print("Turning Left")
+    elif key_status["Right"] is True:
+        print("Turning Right")
+        mqtt_client.send_message('free_moving', [left_speed, -right_speed])
+    else:
         mqtt_client.send_message('stop')
     window.after(50, free_move(window, mqtt_client, left_speed, right_speed))
 # ----------------------------------------------------------------------
