@@ -128,4 +128,33 @@ class Snatch3r(object):
         self.left_motor.stop(stop_action=ev3.Motor.STOP_ACTION_BRAKE)
         self.right_motor.stop(stop_action=ev3.Motor.STOP_ACTION_BRAKE)
 
+    def seek_beacon(self):
+        seeker = ev3.BeaconSeeker(sensor=self.ir_sensor, channel=1)
+        forward_speed = 300
+        turn_speed = 100
 
+        while not self.touch_sensor.is_pressed:
+            current_heading = seeker.heading
+            current_distance = seeker.distance
+            if current_distance == -128:
+                # If the IR Remote is not found just sit idle for this program until it is moved.
+                print("IR Remote not found. Distance is -128")
+                self.stop()
+            else:
+                if math.fabs(current_heading) < 2:
+                    # Close enough of a heading to move forward
+                    print("On the right heading. Distance: ", current_distance)
+                    if current_distance == 0:
+                        return True
+                    if current_distance > 0:
+                        self.constant_moving(forward_speed, forward_speed)
+                elif current_heading < 0:
+                    self.constant_moving(-turn_speed, turn_speed)
+                elif current_heading > 0:
+                    self.constant_moving(turn_speed, -turn_speed)
+                else:
+                    print("Heading too far off")
+            time.sleep(0.2)
+        print("Abandon ship!")
+        self.stop()
+        return False
