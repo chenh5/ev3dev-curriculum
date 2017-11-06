@@ -147,7 +147,9 @@ class Snatch3r(object):
                 if math.fabs(current_heading) < 2:
                     # Close enough of a heading to move forward
                     print("On the right heading. Distance: ", current_distance)
-                    if current_distance == 0:
+                    if current_distance <= 1:
+                        time.sleep(1)
+                        self.stop()
                         return True
                     if current_distance > 0:
                         self.constant_moving(forward_speed, forward_speed)

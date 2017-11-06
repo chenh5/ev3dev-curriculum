@@ -77,7 +77,7 @@ def seek_beacon(robot):
         else:
             # Done: 4. Implement the following strategy to find the beacon.
             # If the absolute value of the current_heading is less than 2, you are on the right heading.
-            #     If the current_distance is 0 return from this function, you have found the beacon!  return True
+            #     If the current_distance is 0 return from this function,q you have found the beacon!  return True
             #     If the current_distance is greater than 0 drive straight forward (forward_speed, forward_speed)
             # If the absolute value of the current_heading is NOT less than 2 but IS less than 10, you need to spin
             #     If the current_heading is less than 0 turn left (-turn_speed, turn_speed)
@@ -95,7 +95,9 @@ def seek_beacon(robot):
             if math.fabs(current_heading) < 2:
                 # Close enough of a heading to move forward
                 print("On the right heading. Distance: ", current_distance)
-                if current_distance == 0:
+                if current_distance <= 1:
+                    time.sleep(1)
+                    robot.stop()
                     return True
                 if current_distance > 0:
                     robot.constant_moving(forward_speed, forward_speed)
