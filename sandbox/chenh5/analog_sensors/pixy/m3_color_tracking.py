@@ -28,10 +28,21 @@ def main():
     turn_speed = 100
 
     while not robot.touch_sensor.is_pressed:
-
+        dx = robot.pixy.value(1) #x
+        dy = robot.pixy.value(2)
+        print("(x,y) = ({},{})".format(dx, dy))
         # TODO: 2. Read the Pixy values for x and y
         # Print the values for x and y
 
+        if dx < 150:
+            robot.constant_moving(-turn_speed, turn_speed)
+        else:
+            if dx > 170:
+                robot.constant_moving(turn_speed, -turn_speed)
+            else:
+                robot.stop()
+                
+        
         # TODO: 3. Use the x value to turn the robot
         #   If the Pixy x value is less than 150 turn left (-turn_speed, turn_speed)
         #   If the Pixy x value is greater than 170 turn right (turn_speed, -turn_speed)
