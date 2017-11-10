@@ -118,9 +118,16 @@ class Snatch3r(object):
     def loop_forever(self):
         self.running = True
         while self.running:
+            #   "Self Defense" mode developed by Shengbo Zou
+            if self.ir_sensor.proximity < 10:
+                self.pinch()
+                ev3.Sound.speak("Don't touch me").wait()
+                ev3.Sound.speak("Now back off").wait()
+                time.sleep(1.5)
+                self.release()
             time.sleep(0.1)
 
-    def shutdown(self):
+    def shut_down(self):
         self.running = False
 
     def constant_moving(self, l_speed, r_speed):
@@ -163,3 +170,17 @@ class Snatch3r(object):
         print("Abandon ship!")
         self.stop()
         return False
+
+    def pinch(self):
+        self.arm_motor.run_forever(speed_sp=900)
+        time.sleep(1.5)
+        self.arm_motor.stop(stop_action=ev3.Motor.STOP_ACTION_BRAKE)
+
+    def release(self):
+        self.arm_motor.run_forever(speed_sp=-900)
+        time.sleep(1.5)
+        self.arm_motor.stop(stop_action=ev3.Motor.STOP_ACTION_BRAKE)
+
+    def free_moving(self, l_speed, r_speed):
+        self.left_motor.run_forever(speed_sp=l_speed)
+        self.right_motor.run_forever(speed_sp=r_speed)
