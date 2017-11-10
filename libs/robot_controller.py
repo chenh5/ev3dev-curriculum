@@ -121,8 +121,7 @@ class Snatch3r(object):
             #   "Self Defense" mode developed by Shengbo Zou
             if self.ir_sensor.proximity < 10:
                 self.pinch()
-                ev3.Sound.speak("Don't touch me").wait()
-                ev3.Sound.speak("Now back off").wait()
+                ev3.Sound.speak("Don't touch me. Now back off").wait()
                 time.sleep(1.5)
                 self.release()
             time.sleep(0.1)
