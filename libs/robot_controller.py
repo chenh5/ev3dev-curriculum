@@ -14,7 +14,7 @@
 import ev3dev.ev3 as ev3
 import math
 import time
-
+import os
 
 
 
@@ -45,6 +45,8 @@ class Snatch3r(object):
 
         self.pixy = ev3.Sensor(driver_name="pixy-lego")
         assert self.pixy
+
+        self.pwr = ev3.PowerSupply()
 
         self.running = True
 
@@ -183,3 +185,10 @@ class Snatch3r(object):
     def free_moving(self, l_speed, r_speed):
         self.left_motor.run_forever(speed_sp=l_speed)
         self.right_motor.run_forever(speed_sp=r_speed)
+
+    def run_file(self):
+        os.system("python follow_move.py");
+
+    def getPower(self):
+        self.mqtt.send_message("rcv_pwr_data",[ self.pwr.measured_current, self.pwr.measured_voltage])
+
